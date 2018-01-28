@@ -11984,16 +11984,12 @@ Object.defineProperty(exports, "__esModule", {
 });
 var COLLAPSE_STEP_DETAILS = exports.COLLAPSE_STEP_DETAILS = "COLLAPSE_STEP_DETAILS";
 var TOGGLE_SNACK_BAR = exports.TOGGLE_SNACK_BAR = "TOGGLE_SNACK_BAR";
-var STEP_NAME_COPY = exports.STEP_NAME_COPY = "STEP_NAME_COPY";
 
 var collapseStepDetails = exports.collapseStepDetails = function collapseStepDetails(stepId) {
   return { type: COLLAPSE_STEP_DETAILS, data: { stepId: stepId } };
 };
-var toggleSnackBar = exports.toggleSnackBar = function toggleSnackBar(stepId) {
-  return { type: TOGGLE_SNACK_BAR, data: { stepId: stepId } };
-};
-var stepNameCopy = exports.stepNameCopy = function stepNameCopy(stepName) {
-  return { type: STEP_NAME_COPY, data: { stepName: stepName } };
+var toggleSnackBar = exports.toggleSnackBar = function toggleSnackBar(shouldOpen) {
+  return { type: TOGGLE_SNACK_BAR, data: { shouldOpen: shouldOpen } };
 };
 
 /***/ }),
@@ -22316,6 +22312,7 @@ var StepTab = function StepTab(_ref) {
             totalNumberOfRows: filteredSteps.length | 1
         }),
         _react2.default.createElement(_Snackbar2.default, { open: snackBar, autoHideDuration: 4000,
+            onRequestClose: closeSnackBar,
             message: 'Step Name Copied to your clipboard'
         })
     );
@@ -22599,11 +22596,15 @@ var mapStepTabStateToProps = function mapStepTabStateToProps(state, props) {
         openStepDetails: function openStepDetails(e) {
             return state.stepCardState[e];
         },
-        snackBar: state.snackBarState[state.stepNameCopy.stepName]
+        snackBar: state.snackBarState.shouldOpen
     };
 };
 var mapStepTabDispatchToProps = function mapStepTabDispatchToProps(dispatch, props) {
-    return {};
+    return {
+        closeSnackBar: function closeSnackBar(e) {
+            return dispatch((0, _actions.toggleSnackBar)(false));
+        }
+    };
 };
 
 var mapStepCardStateToProps = function mapStepCardStateToProps(state, props) {
@@ -22618,8 +22619,7 @@ var mapStepCardDispatchToProps = function mapStepCardDispatchToProps(dispatch, p
         },
         copyToClipboard: function copyToClipboard(e) {
             handleStepCopy(props.stepDetails.text);
-            dispatch((0, _actions.toggleSnackBar)(props.stepId));
-            dispatch((0, _actions.stepNameCopy)(props.stepId));
+            dispatch((0, _actions.toggleSnackBar)(true));
         }
     };
 };
@@ -22876,7 +22876,6 @@ var _snackBarState = __webpack_require__(213);
 
 var GenericStepsReducers = {
     genericSteps: _genericStepsReducers.genericSteps,
-    stepNameCopy: _snackBarState.stepNameCopy,
     filterStepsByName: _genericStepsReducers.filterStepsByName,
     stepsCategories: _genericStepsReducers.stepsCategories,
     filterCategories: _genericStepsReducers.filterCategories,
@@ -22895,13 +22894,11 @@ exports.default = GenericStepsReducers;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.stepNameCopy = exports.snackBarState = undefined;
+exports.snackBarState = undefined;
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var _actions = __webpack_require__(77);
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 var snackBarState = exports.snackBarState = function snackBarState() {
     var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
@@ -22910,21 +22907,6 @@ var snackBarState = exports.snackBarState = function snackBarState() {
     switch (action.type) {
 
         case _actions.TOGGLE_SNACK_BAR:
-            return _extends({}, state, _defineProperty({}, action.data.stepId, !state[action.data.stepId]));
-            break;
-
-        default:
-            return state;
-    }
-};
-
-var stepNameCopy = exports.stepNameCopy = function stepNameCopy() {
-    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-    var action = arguments[1];
-
-
-    switch (action.type) {
-        case _actions.STEP_NAME_COPY:
             return _extends({}, state, action.data);
             break;
 
