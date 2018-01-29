@@ -22279,16 +22279,17 @@ var StepTab = function StepTab(_ref) {
         snackBar = _ref$snackBar === undefined ? false : _ref$snackBar;
 
     var rowRenderer = function rowRenderer(key) {
-        var content = filteredSteps.length && key < filteredSteps.length ? _react2.default.createElement(_containers.StepCardCont, { key: filteredSteps[key], stepDetails: filteredSteps[key],
-            stepId: filteredSteps[key].number }) : _react2.default.createElement(
-            'div',
-            { className: 'mt-3 font-italic text-center text-secondary' },
-            'No Results Found'
-        );
+        var content = key < filteredSteps.length ? _react2.default.createElement(_containers.StepCardCont, { key: filteredSteps[key], stepDetails: filteredSteps[key],
+            stepId: filteredSteps[key].number }) : '';
+
         return _react2.default.createElement(
             'div',
             { key: key },
-            content
+            filteredSteps.length ? content : _react2.default.createElement(
+                'div',
+                { className: 'mt-3 font-italic text-center text-secondary' },
+                'No Results Found'
+            )
         );
     };
 
